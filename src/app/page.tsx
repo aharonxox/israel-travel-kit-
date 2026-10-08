@@ -1,5 +1,5 @@
-import AppShell from "@/components/app-shell";
+import SessionGate from "@/components/session-gate";
 
 export default function Home() {
-  return <AppShell />;
+  return <SessionGate />;
 }

@@ -9,6 +9,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import PlaceholderView from "./placeholder-view";
+import type { UserStatus } from "@/lib/demo-session";
 
 type TabId = "translator" | "vision" | "jewish" | "events";
 
@@ -60,9 +61,8 @@ const VIEWS: Record<
  * glassmorphism bottom navigation. Tab switching is pure client-side state —
  * no router navigation, no page reload.
  */
-export default function AppShell() {
+export default function AppShell({ userStatus, onSignOut, sessionNotice }: { userStatus: UserStatus; onSignOut: () => void; sessionNotice?: string | null }) {
   const [activeTab, setActiveTab] = useState<TabId>("translator");
-  const activeView = VIEWS[activeTab];
 
   return (
     <div className="relative flex min-h-dvh flex-col bg-gradient-to-b from-blue-50 via-white to-purple-50 text-zinc-900">
@@ -76,6 +76,11 @@ export default function AppShell() {
         <div className="absolute -right-16 top-1/3 h-64 w-64 rounded-full bg-sky-200/30 blur-3xl" />
       </div>
 
+      <header className="relative z-10 mx-auto flex w-full max-w-lg items-center justify-between gap-4 px-5 pt-6">
+        <p className="text-xs font-semibold text-zinc-700">{userStatus === "premium" ? "Premium demo" : "Guest demo"}</p>
+        <button type="button" onClick={onSignOut} className="rounded-2xl border border-zinc-200 bg-white/80 px-4 py-2 text-xs font-semibold text-zinc-700 transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 active:scale-95">Sign out / reset</button>
+      </header>
+      {sessionNotice && <p role="status" className="relative mx-auto mt-4 max-w-lg px-5 text-xs leading-6 text-amber-800">{sessionNotice}</p>}
       {/* Main content — bottom padding keeps it clear of the fixed nav */}
       <main className="relative flex flex-1 flex-col items-center justify-center px-4 pb-40 pt-16">
         <span className="mb-8 text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">
@@ -85,6 +90,7 @@ export default function AppShell() {
         {/* Only the selected view is rendered */}
         {activeTab === "translator" && (
           <PlaceholderView
+            userStatus={userStatus}
             icon={Languages}
             title={VIEWS.translator.title}
             description={VIEWS.translator.description}
@@ -93,6 +99,7 @@ export default function AppShell() {
         )}
         {activeTab === "vision" && (
           <PlaceholderView
+            userStatus={userStatus}
             icon={ScanLine}
             title={VIEWS.vision.title}
             description={VIEWS.vision.description}
@@ -101,6 +108,7 @@ export default function AppShell() {
         )}
         {activeTab === "jewish" && (
           <PlaceholderView
+            userStatus={userStatus}
             icon={Compass}
             title={VIEWS.jewish.title}
             description={VIEWS.jewish.description}
@@ -109,6 +117,7 @@ export default function AppShell() {
         )}
         {activeTab === "events" && (
           <PlaceholderView
+            userStatus={userStatus}
             icon={CalendarDays}
             title={VIEWS.events.title}
             description={VIEWS.events.description}

@@ -1,7 +1,9 @@
 import type { LucideIcon } from "lucide-react";
+import type { UserStatus } from "@/lib/demo-session";
 
 type PlaceholderViewProps = {
   icon: LucideIcon;
+  userStatus: UserStatus;
   title: string;
   description: string;
   phaseLabel: string;
@@ -13,12 +15,14 @@ type PlaceholderViewProps = {
  */
 export default function PlaceholderView({
   icon: Icon,
+  userStatus,
   title,
   description,
   phaseLabel,
 }: PlaceholderViewProps) {
   return (
     <section
+      data-user-status={userStatus}
       aria-label={`${title} placeholder view`}
       className="w-full max-w-md rounded-3xl border border-white/60 bg-white/70 p-8 text-center shadow-xl shadow-blue-900/5 backdrop-blur-xl"
     >
