@@ -9,6 +9,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import PlaceholderView from "./placeholder-view";
+import TranslatorEngine from "./translator-engine";
 import type { UserStatus } from "@/lib/demo-session";
 
 type TabId = "translator" | "vision" | "jewish" | "events";
@@ -88,15 +89,7 @@ export default function AppShell({ userStatus, onSignOut, sessionNotice }: { use
         </span>
 
         {/* Only the selected view is rendered */}
-        {activeTab === "translator" && (
-          <PlaceholderView
-            userStatus={userStatus}
-            icon={Languages}
-            title={VIEWS.translator.title}
-            description={VIEWS.translator.description}
-            phaseLabel={VIEWS.translator.phaseLabel}
-          />
-        )}
+        {activeTab === "translator" && <TranslatorEngine userStatus={userStatus} />}
         {activeTab === "vision" && (
           <PlaceholderView
             userStatus={userStatus}
