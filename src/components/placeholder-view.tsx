@@ -5,6 +5,8 @@ type PlaceholderViewProps = {
   title: string;
   description: string;
   phaseLabel: string;
+  panelId: string;
+  tabId: string;
 };
 
 /**
@@ -16,10 +18,15 @@ export default function PlaceholderView({
   title,
   description,
   phaseLabel,
+  panelId,
+  tabId,
 }: PlaceholderViewProps) {
   return (
     <section
-      aria-label={`${title} placeholder view`}
+      aria-labelledby={tabId}
+      id={panelId}
+      role="tabpanel"
+      tabIndex={0}
       className="w-full max-w-md rounded-3xl border border-white/60 bg-white/70 p-8 text-center shadow-xl shadow-blue-900/5 backdrop-blur-xl"
     >
       <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500/15 to-purple-500/15 text-blue-600">

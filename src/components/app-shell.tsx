@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { type KeyboardEvent, useRef, useState } from "react";
 import {
   CalendarDays,
   Compass,
@@ -62,7 +62,38 @@ const VIEWS: Record<
  */
 export default function AppShell() {
   const [activeTab, setActiveTab] = useState<TabId>("translator");
-  const activeView = VIEWS[activeTab];
+  const tabRefs = useRef<Partial<Record<TabId, HTMLButtonElement | null>>>({});
+
+  function handleTabKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    currentIndex: number,
+  ) {
+    let nextIndex: number | null = null;
+
+    switch (event.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        nextIndex = (currentIndex + 1) % TABS.length;
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        nextIndex = (currentIndex - 1 + TABS.length) % TABS.length;
+        break;
+      case "Home":
+        nextIndex = 0;
+        break;
+      case "End":
+        nextIndex = TABS.length - 1;
+        break;
+      default:
+        return;
+    }
+
+    event.preventDefault();
+    const nextTab = TABS[nextIndex];
+    setActiveTab(nextTab.id);
+    tabRefs.current[nextTab.id]?.focus();
+  }
 
   return (
     <div className="relative flex min-h-dvh flex-col bg-gradient-to-b from-blue-50 via-white to-purple-50 text-zinc-900">
@@ -89,6 +120,8 @@ export default function AppShell() {
             title={VIEWS.translator.title}
             description={VIEWS.translator.description}
             phaseLabel={VIEWS.translator.phaseLabel}
+            panelId="panel-translator"
+            tabId="tab-translator"
           />
         )}
         {activeTab === "vision" && (
@@ -97,6 +130,8 @@ export default function AppShell() {
             title={VIEWS.vision.title}
             description={VIEWS.vision.description}
             phaseLabel={VIEWS.vision.phaseLabel}
+            panelId="panel-vision"
+            tabId="tab-vision"
           />
         )}
         {activeTab === "jewish" && (
@@ -105,6 +140,8 @@ export default function AppShell() {
             title={VIEWS.jewish.title}
             description={VIEWS.jewish.description}
             phaseLabel={VIEWS.jewish.phaseLabel}
+            panelId="panel-jewish"
+            tabId="tab-jewish"
           />
         )}
         {activeTab === "events" && (
@@ -113,6 +150,8 @@ export default function AppShell() {
             title={VIEWS.events.title}
             description={VIEWS.events.description}
             phaseLabel={VIEWS.events.phaseLabel}
+            panelId="panel-events"
+            tabId="tab-events"
           />
         )}
       </main>
@@ -124,7 +163,7 @@ export default function AppShell() {
       >
         <div className="mx-auto w-full max-w-md rounded-3xl border border-white/60 bg-white/70 p-1.5 shadow-xl shadow-zinc-900/10 backdrop-blur-xl">
           <ul className="flex items-stretch gap-1" role="tablist">
-            {TABS.map((tab) => {
+            {TABS.map((tab, index) => {
               const isActive = tab.id === activeTab;
               const Icon = tab.icon;
               return (
@@ -132,8 +171,15 @@ export default function AppShell() {
                   <button
                     type="button"
                     role="tab"
+                    id={`tab-${tab.id}`}
+                    aria-controls={`panel-${tab.id}`}
                     aria-selected={isActive}
+                    tabIndex={isActive ? 0 : -1}
                     onClick={() => setActiveTab(tab.id)}
+                    onKeyDown={(event) => handleTabKeyDown(event, index)}
+                    ref={(element) => {
+                      tabRefs.current[tab.id] = element;
+                    }}
                     className={`flex w-full flex-col items-center gap-1 rounded-2xl px-2 py-2.5 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 active:scale-95 ${
                       isActive
                         ? "bg-blue-500/10 text-blue-600"
